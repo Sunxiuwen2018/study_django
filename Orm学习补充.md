@@ -6,15 +6,25 @@
 
 >>步骤：
     1、pip3 install virtualenv
+
     2、cd 到目标目录
+
     3、virtualenv web   # 创建虚拟环境，生成web目录，web为环境名
+
     4、D:\Django>cd luffy_web\Scripts
+
     5、D:\Django\luffy_web\Scripts>activate.bat   激活虚拟环境
+
     (luffy_web) D:\Django\luffy_web\Scripts>
+
     (luffy_web) D:\Django\luffy_web\Scripts>deactivate.bat  退出虚拟环境
+
     6、pip3 install django==1.11.5
+
     7、django-admin startproject addmoney
+
     8、python manage.py startapp lu_demo
+
     9、通过pycharm打开项目，cmd进入虚拟环境
 
 ## 今日收获2：
