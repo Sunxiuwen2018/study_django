@@ -58,94 +58,19 @@
             list_display = ['id','title', 'url','name' ]   # 类中的字段，展示
             list_editable = ['url', 'name']                # 其中的字段可以修改
 
-# Django序列化解决方案
->需求：因为后端给前端都是json数据，因此需要将数据序列化，而orm数据类型都是queryset，故需要解决，方案如下
-
-from django.http import HttpResponse, JsonResponse
-from django.views import View  # 创建cbv必须继承的类
-from lu_demo import models
-
-class BookView(View):
-
-    给前端数据展示
-        book_list = [
-            {
-                id:1,
-                title:"xx",
-                pulisher:{title:xxx},
-                authors:[{},{}]
-            }
-        ]
 
 
-    def get(self, request):
-        # 现状 queryset [<>,<>]
-        # book_list = models.Book.objects.all()
-        # <QuerySet [<Book: 8年工作纪实>, <Book: python速成记>, <Book: 人生苦短>]>
-        # all()得到的是queryset列表,里面是对象，而传给前端必须是json格式，queryset无法转
-        # Object of type 'QuerySet' is not JSON serializable
+[vue-cli3](https:://blog.csdn.net/qq_36407748/article/details/80739787 "Markdown")
 
-        # 方式一：通过values，得到queryset的字典[{},{}],通过list转换成列表!!!
-        # 拿不到datetime类型
-        """
-        book_list = models.Book.objects.all().values("id", "title", )
-        import json
-        ret = json.dumps(list(book_list), ensure_ascii=False)  # 参数是将ascii码转码成中文
-        return HttpResponse(ret)
-        """
-        # json无法序列化时间类型,set，能str,int,float，bool,list.tuple,dict,None
+[虚拟环境](https:://blog.csdn.net/weixin_39036700/article/details/80711565?utm_source=blogxgwz0 "Markdown")
 
-        # 方式二：django自带的JsonResponse，它可以序列时间，无法序列化外键关系
-        # JsonResponse主要做了两件事
-        # 1、继承HttpResponse
-        # 2、做了序列换 =>json.dumps
-        # 3、还序列化了datetime
-        # HttpResponse  返回字符串
-        # book_list = models.Book.objects.all().values("id", "title", "pub_time", "publisher")
-        # 外键publisher拿到的是id
-        # [{"id": 1, "title": "8年工作纪实", "pub_time": "2018-10-01", "publisher": 1},]
-        # return JsonResponse(book_list)
-        # In order to allow non-dict objects to be serialized set the safe parameter to False.
-        # 为了允许非dict对象被序列化，将安全参数设置为False,需要设置参数sefe=False
-        """
-        return JsonResponse(list(book_list), safe=False,json_dumps_params={"ensure_ascii":False})
-        # json_dumps_params 解决参数，显示中文
-        """
-        """
-        # 想拿到的publisher的所有信息组成一个字典，故需要拿到对象然后询环publisher：{title：xx，name：xx}
-        book_list = list(book_list)
-        for book in book_list:
-            publisher_obj = models.Publisher.objects.filter(id=book["publisher"]).first()
-            book["publisher"] = {
-                "id": publisher_obj.id,
-                "title": publisher_obj.title
-            }
-        return JsonResponse(book_list, safe=False, json_dumps_params={"ensure_ascii": False})
 
-        # 含有chioce字段，默认拿到的是id，希望拿到的是值，且是需要对象才能拿到obj.get_字段名_display()
-        # manytomany字段也和外键一样需要循环
-        # 上面的解决都非常的复杂，django提供了终极的方法
-        """
-        # 方式三：django带的能够解决queryset序列化
-        # 优点：可以序列化queryset，但外键关系依然不能序列化，取出来的还是id
-        """
-                [
-              {
-                "model": "lu_demo.book",
-                "pk": 1,
-                "fields": {
-                  "title": "8年工作纪实",
-                  "category": 3,
-                  "pub_time": "2018-10-01",
-                  "publisher": 1,
-                  "authors": [
-                    1
-                  ]
-                },
-              },]
-        """
-        from django.core import serializers
-        book_list = models.Book.objects.all()
-        ret = serializers.serialize("json", book_list, ensure_ascii=False)
-        return HttpResponse(ret)
+
+
+
+
+
+
+
+
 
