@@ -52,6 +52,7 @@
                 return Response("测试中")
 
 >**源码**
+
     def check_permissions(self, request):
         """
         Check if the request should be permitted.

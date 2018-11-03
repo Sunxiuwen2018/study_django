@@ -142,6 +142,7 @@
 ```
 
 >**源码：**
+
     def check_throttles(self, request):
         """
         Check if request should be throttled.
