@@ -210,3 +210,5 @@ class BookView(View):
                 url("books/", views.BookView.as_view(), name='book'),
                 url("api/book/$", views.BookViewDRF.as_view()),
                 url("api/book/(?P<id>\d+)", views.BookEditView.as_view()),
+
+
