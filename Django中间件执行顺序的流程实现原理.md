@@ -1,9 +1,8 @@
 # Django中间件执行顺序的流程实现原理
 >代码模拟
-    >> 1. 将每个类添加一个列表中，循环列表进行实例化，如何调用类中的方法，将方法名添加到配置好的方法列表中，
-    >> 2.循环每个存放方法名的列表，依次按顺序执行，就达到了中间件5个方法的执行顺序了
+>> 将每个类添加一个列表中，循环列表进行实例化，如何调用类中的方法，将方法名添加到配置好的方法列表中，
+>> 循环每个存放方法名的列表，依次按顺序执行，就达到了中间件5个方法的执行顺序了
 
-    ```
         class M1(object):
             def process_request(self, request):
                 print("M1_process_request")
@@ -81,4 +80,3 @@
             func("request", "view_func")
         for func in process_response_list:
             func("request", "response")
-    ```
