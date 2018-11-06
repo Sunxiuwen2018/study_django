@@ -334,56 +334,56 @@ Http协议全称为超文本传输协议，是基于tcp/ip协议进行通信的�
 
 > 两个用于理解模板渲染的示例
 ```
-示例1：
-    视图：
-        def test(request):
-            """
-            :param request:
-            :return:
-            """
-            return render(request,'test.html',{'k1':‘python’})
-    test.html
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta http-equiv="x-ua-compatible" content="IE=edge">
-            <meta name="viewport" content="width=device-width, initial-scale=1">
-            <title>Title</title>
-        </head>
-        <body>
-        <div>
-            <h1>{{ k1 }}</h1>
-            <script>
-                alert('{{ k1 }}'); --->alert('python')--->打印出
-            </script>
-            <script>
-                alert({{ k1 }}); ---> alert(python) --->报错
-            </script>
-        </div>
-        </body>
-        </html>
-示例2：
-    视图：
-    test.html
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta http-equiv="x-ua-compatible" content="IE=edge">
-            <meta name="viewport" content="width=device-width, initial-scale=1">
-            <title>Title</title>
-        </head>
-        <body>
-        <div>
-            <h1>{{ k1 }}</h1>
-            <script src='/static/commons.js'></script>
-        </div>
-        </body>
-        </html>
+    示例1：
+        视图：
+            def test(request):
+                """
+                :param request:
+                :return:
+                """
+                return render(request,'test.html',{'k1':‘python’})
+        test.html
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta http-equiv="x-ua-compatible" content="IE=edge">
+                <meta name="viewport" content="width=device-width, initial-scale=1">
+                <title>Title</title>
+            </head>
+            <body>
+            <div>
+                <h1>{{ k1 }}</h1>
+                <script>
+                    alert('{{ k1 }}'); --->alert('python')--->打印出
+                </script>
+                <script>
+                    alert({{ k1 }}); ---> alert(python) --->报错
+                </script>
+            </div>
+            </body>
+            </html>
+    示例2：
+        视图：
+        test.html
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta http-equiv="x-ua-compatible" content="IE=edge">
+                <meta name="viewport" content="width=device-width, initial-scale=1">
+                <title>Title</title>
+            </head>
+            <body>
+            <div>
+                <h1>{{ k1 }}</h1>
+                <script src='/static/commons.js'></script>
+            </div>
+            </body>
+            </html>
 
-    commons.js
-        alert('{{k1}}')  ---> 会alert出一个`{{k1}}`
+        commons.js
+            alert('{{k1}}')  ---> 会alert出一个`{{k1}}`
 ```
 4. 扩展：两个系统之间进行相互数据传输，A向B发送post请求，但B没有获取到数据，可能原因是？
     * 确认网络是否相通，查看日志是否有请求过来
