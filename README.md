@@ -520,13 +520,16 @@ Http协议全称为超文本传输协议，是基于tcp/ip协议进行通信的�
         * 创建一个变量名必须是`register`：register= template.Library()
     - filter
         - 函数：
-
+        ```
             @rigester.filter
             def add_china(value,args):
                 return "{}_{}".format(value,args)
+        ```
         - 模板中应用：
+        ```
             {{"big"|add_china:"@"}}
             {% if "xxx"|add_china:"yyy" %}<h1>love</h1>{% endif %}
+        ```
     -
 
 
