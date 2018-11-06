@@ -1,8 +1,8 @@
 # 第一部分：Django回顾
 ## 简叙http协议？
 ```
-Http协议全称为超文本传输协议，是基于tcp/ip协议进行通信的，它的显著特点是无状态，短连接，主要表现为服务端处理一次请求就会断开连接，且不保存用户状态，也就是说，客户端请求响应后，再次发送请求时，服务端还是不认识客户端，解决的方式之一就是建立session在服务端保存状态。再就是http的请求报文格式和响应报文格式主要都分为两部分请求头和请求体，响应头和响应体，请求头与请求头，响应头与响应头之间通过\r\n分割，请求头与请求体，响应头与响应体之间通过2个\r\n分割。
-再就是常见的get请求是没有请求体的，它的数据是拼接在url上的，而post请求是放在请求体中的。
+    Http协议全称为超文本传输协议，是基于tcp/ip协议进行通信的，它的显著特点是无状态，短连接，主要表现为服务端处理一次请求就会断开连接，且不保存用户状态，也就是说，客户端请求响应后，再次发送请求时，服务端还是不认识客户端，解决的方式之一就是建立session在服务端保存状态。再就是http的请求报文格式和响应报文格式主要都分为两部分请求头和请求体，响应头和响应体，请求头与请求头，响应头与响应头之间通过\r\n分割，请求头与请求体，响应头与响应体之间通过2个\r\n分割。
+    再就是常见的get请求是没有请求体的，它的数据是拼接在url上的，而post请求是放在请求体中的。
 ```
 ## 你了解的请求头都有哪些？
 1. ACCEPT: 告诉服务端浏览器能够解析的数据格式
@@ -83,7 +83,6 @@ Http协议全称为超文本传输协议，是基于tcp/ip协议进行通信的�
     if __name__ == '__main__':
         httpd = make_server('127.0.0.1', 8000, obj)
         httpd.serve_forever()
-
 ```
 
 ## django中间件的作用？应用场景？
@@ -240,7 +239,8 @@ Http协议全称为超文本传输协议，是基于tcp/ip协议进行通信的�
       func = getattr(obj, func_name)
       func()
 
-## 路由系统
+## 路由系统 Urls
+
     >url与视图函数的映射表urlpatternts的配置：
 
         >> 由一个列表组成，url(正则表达式，视图函数，参数，别名)
@@ -299,7 +299,7 @@ Http协议全称为超文本传输协议，是基于tcp/ip协议进行通信的�
                            ],None,'n1')),
         ]
 
-## 视图系统
+## 视图系统 View
 1. 软件架构模式
     - MVC model view controller
     - MTV  modele template view
@@ -398,57 +398,11 @@ Http协议全称为超文本传输协议，是基于tcp/ip协议进行通信的�
     >> - django获取请求体，通过request.body
        - request.POST是将请求体的数据转换成了QueryDict对象
 
+>**代码演练**
 ```
-代码演练
-1. csrf_token
-        from django.views.decorators.csrf import csrf_exempt,csrf_protect
+    1. csrf_token
+            from django.views.decorators.csrf import csrf_exempt,csrf_protect
 
-        @csrf_exempt
-        def api(request):
-            """
-            为李超提供的API接口
-            :param request:
-            :return:
-            """
-            print(request.POST)
-            return HttpResponse('...')
-
-
-        实例代码：
-            李超.py：
-                import requests
-                response = requests.post('http://127.0.0.1:8000/crm/api/',data={'user':'alex','pwd':'dsb'})
-                print(response.text)
-
-                Http请求格式：
-                    """POST /crm/api/ http\1.1\r\nhost:..\r\nContent-Type:application/x-www-form-urlencoded .....\r\n\r\nuser=alex&pwd=dsb"""
-
-
-            django服务端：
-
-                from django.views.decorators.csrf import csrf_exempt,csrf_protect
-
-                @csrf_exempt
-                def api(request):
-                    """
-                    为李超提供的API接口
-                    :param request:
-                    :return:
-                    """
-                    print(request.POST)
-                    return HttpResponse('...')
-2. request.POST解析时，有限制。
-
-        李超.py
-
-            import requests
-            response = requests.post('http://127.0.0.1:8000/crm/api/',json={'user':'alex','pwd':'dsb'})
-            print(response.text)
-
-            Http请求格式：
-                """POST /crm/api/ http\1.1\r\nhost:..\r\nContent-Type:application/json .....\r\n\r\n{'user':'alex','pwd':'dsb'}"""
-
-        django服务端：
             @csrf_exempt
             def api(request):
                 """
@@ -456,16 +410,63 @@ Http协议全称为超文本传输协议，是基于tcp/ip协议进行通信的�
                 :param request:
                 :return:
                 """
-                print(request.body) # 原生的请求体格式，有数据；（自己读取body然后进行解析）
-                print(request.POST) # 将原生的请求体转换成 QueryDict对象，无数据。
+                print(request.POST)
                 return HttpResponse('...')
+
+
+            实例代码：
+                李超.py：
+                    import requests
+                    response = requests.post('http://127.0.0.1:8000/crm/api/',data={'user':'alex','pwd':'dsb'})
+                    print(response.text)
+
+                    Http请求格式：
+                        """POST /crm/api/ http\1.1\r\nhost:..\r\nContent-Type:application/x-www-form-urlencoded .....\r\n\r\nuser=alex&pwd=dsb"""
+
+
+                django服务端：
+
+                    from django.views.decorators.csrf import csrf_exempt,csrf_protect
+
+                    @csrf_exempt
+                    def api(request):
+                        """
+                        为李超提供的API接口
+                        :param request:
+                        :return:
+                        """
+                        print(request.POST)
+                        return HttpResponse('...')
+    2. request.POST解析时，有限制。
+
+            李超.py
+
+                import requests
+                response = requests.post('http://127.0.0.1:8000/crm/api/',json={'user':'alex','pwd':'dsb'})
+                print(response.text)
+
+                Http请求格式：
+                    """POST /crm/api/ http\1.1\r\nhost:..\r\nContent-Type:application/json .....\r\n\r\n{'user':'alex','pwd':'dsb'}"""
+
+            django服务端：
+                @csrf_exempt
+                def api(request):
+                    """
+                    为李超提供的API接口
+                    :param request:
+                    :return:
+                    """
+                    print(request.body) # 原生的请求体格式，有数据；（自己读取body然后进行解析）
+                    print(request.POST) # 将原生的请求体转换成 QueryDict对象，无数据。
+                    return HttpResponse('...')
 ```
 
-## 模板系统
+## 模板系统 Template
 > 将分发进行到底，可以将在自己的app中建立template、urls、views
 1. 模板的查找顺序
     - 先去根目录下的templates文件夹中寻找
     - 根据app的注册顺序，去每个app的templates文件夹中寻找，只要有相同命名的模板就按顺序获取渲染（已验证）
+
 2. 模板的继承
     **母版**
     - 定义bash.html 放在templates中（可创建归类目录，引用时加上目录path即可）
@@ -557,7 +558,133 @@ Http协议全称为超文本传输协议，是基于tcp/ip协议进行通信的�
             {%  func1 "dog" "bug" %}
 
         ```
-4.
+
+## 模型系统
+1. ORM 关系对应映射
+    - 类     ---> 表
+    - 对象   ---> 行
+
+2. 创建model类
+    - 导入 from django.db import models
+    - 创建类，继承modle.Modle
+    ```
+        class Goods(models.Model):
+            title = models.CharField(verbose_name="商品名称", max_length=32)
+            price = models.IntegerField(verbose_name="价格")
+            source = models.ForeignKey(verbose_name="供货商", to="Source",on_delete=models.CASCADE)
+            category_choices = (
+                (1, "生活用品"),
+                (2, "计生用品"),
+                (1, "食品"),
+                (1, "生鲜"),
+            )
+            category = models.CharField(verbose_name="种类", choices=category_choices, max_length=32)
+            store_room = models.ManyToManyField(verbose_name="仓库", to="StoreRoom")
+            purchase_date = models.DateTimeField(verbose_name="进货日期")
+    ```
+    - FK 一对多
+        - 子表从母表中选出一条数据一一对应，但母表的这条数据还可以被其他子表数据选择、共同点是在admin中添加数据的话，都会出现一个select选框，但只能单选，因为不论一对一还是一对多，自己都是“一”
+        * on_delete:
+            ```
+                models.CASCADE，删除供货商，则将改供货商下的厂商全部删除。 + 代码判断
+                models.DO_NOTHING，删除供货商，引发错误IntegrityError
+                models.PROTECT，删除供货商，引发错误ProtectedError
+                models.SET_NULL，删除供货商，则将改供货商下的厂商所属供货商ID设置为空。（将FK字段设置为null=True）
+                models.SET_DEFAULT，删除供货商，则将改供货商下的厂商所属供货商ID设置默认值。（将FK字段设置为default=2）
+                models.SET，删除供货商，则将执行set对应的函数，函数的返回值就是要给改供货商下厂商设置的新的供货商ID。
+                    例如：
+                        def func():
+                            models.Users.......
+                            return 10
+
+                        class MyModel(models.Model):
+                            user = models.ForeignKey(to="User",to_field="id"on_delete=models.SET(func),)
+
+                方法：
+                    models.CASCADE， 删除逻辑时，通过代码判断当前 “供货商” 下是否有用户。
+                    models.SET_NULL，稳妥。
+                    沟通之后在确定。
+            ```
+        * db_constraint:
+            - 待补充？？？？？
+            ```
+                depart = models.ForeignKey(verbose_name='所属部门',to="Department",db_constraint=False) # 无约束，但可以使用django orm的连表查询。
+
+                    models.UserInfo.objects.filter(depart__title='xxx')
+            ```
+        * limit_choice_to
+            - 连表只关联部分数据
+                ```
+                    class ClassList(models.Model):
+                        """
+                        班级表
+                        """
+                        title = models.CharField(verbose_name='班级名称', max_length=32)
+
+                        bzr = models.ForeignKey(to=User,limit_choices_to={'id__lt':4})
+                        teacher = models.ForeignKey(to=User,limit_choices_to={'id__gte':4})
+                ```
+        * related_name
+            - 为外键设置别名，反向查询时，不用`表名_set`,而是通过related_name直接`.`字段
+
+        + PS：对于fk，一般公司数据量和访问量不大时，创建fk做约束，反之以牺牲硬盘空间和代码量，来获取访问速度的提升(连表查询速度比单表查询速度要慢)
+
+    - M2M 多对多，本质还是fk
+        - 比如有多个孩子，和多种颜色、每个孩子可以喜欢多种颜色，一种颜色可以被多个孩子喜欢，对于双向均是可以有多个选择
+        ```
+            只有django会自动创建第三张表(场景：关系表只有boy和girl的id)：
+                    class Boy(models.Model):
+                        name = models.CharField(max_length=32)
+
+                    class Girl(models.Model):
+                        name = models.CharField(max_length=32)
+
+                        boy = models.ManyToManyField('Boy')
+
+            手动创建第三张表（场景：除了boy和girl的id以外，还需要其他字段）：
+                class Boy(models.Model):
+                    name = models.CharField(max_length=32)
+
+                class Girl(models.Model):
+                    name = models.CharField(max_length=32)
+
+                class Boy2Girl(models.Model):
+                    b = models.ForeignKey(to='Boy')
+                    g = models.ForeignKey(to='Girl')
+
+                    class Meta:
+                        unique_together = (
+                            ("b", "g"),
+                        )
+        ```
+    - O2O 一对一
+        - 子表从母表中选出一条数据一一对应，母表中选出来一条就少一条，子表不可以再选择母表中已被选择的那条数据
+        ```
+            class userinfo:
+                        """
+                        所有员工 (130)
+                        """
+                        name = 用户名
+                        email = 邮箱
+                        ...
+                    class Admin:
+                        """
+                        给30个人开账号(30)，可以登录教务系统
+                        """
+                        username = 登录用户名
+                        password ='密码'
+
+                        user =  models.OneToOneField(to='userinfo')
+
+        ```
+
+
+
+
+
+
+
+
 
 
 >**所有ORM操作**
