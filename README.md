@@ -519,11 +519,12 @@ Http协议全称为超文本传输协议，是基于tcp/ip协议进行通信的�
         * 在app或项目下建立一个目录名必须是`templatetag`的目录,在其目录创建一个py文件
         * 引入模块template：  from django import template
         * 创建一个变量名必须是`register`：register= template.Library()
-    - filter
+    - 自定义filter
         - 函数：
         ```
             @rigester.filter
             def add_china(value,args):
+                """一般用于对变量进行修饰，返回一个结果"""
                 return "{}_{}".format(value,args)
         ```
         - 模板中应用：
@@ -531,7 +532,32 @@ Http协议全称为超文本传输协议，是基于tcp/ip协议进行通信的�
             {{"big"|add_china:"@"}}
             {% if "xxx"|add_china:"yyy" %}<h1>love</h1>{% endif %}
         ```
-    -
+    - 自定义simple_tag
+        - 函数：
+        ```
+            @rigester.simple_tag
+            def func(x,y,z):
+                """一般用于给页面返回一个结果"""
+                return x + y + z
+        ```
+        - 模板中应用：
+        ```
+            {% func "good" "good" "study"  %}
+        ```
+    - 自定义inclusion_tag
+        - 函数：
+        ```
+            @rigister.inclusion_tag('tag.html')
+            def fun1(x,y)
+                """将传入的值在tag.html中应用，再返回代码块"""
+                return {"x":x,"y":y}
+        ```
+        - 模板中应用：
+        ```
+            {%  func1 "dog" "bug" %}
+
+        ```
+4.
 
 
 
