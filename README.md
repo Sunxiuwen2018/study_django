@@ -111,11 +111,11 @@ Http协议全称为超文本传输协议，是基于tcp/ip协议进行通信的�
                 return response
     ```
 
-    -跨域的原因：浏览器同源策略导致，只要访问的域名或端口和请求方任一个不一致就会造成跨域现象
+    - 跨域的原因：浏览器同源策略导致，只要访问的域名或端口和请求方任一个不一致就会造成跨域现象
     浏览器其实拿到了数据，但因同源策略进行了拦截
 
     - csrf_token验证（django内置功能）
-    -- 原因，解决方法
+    - 原因，解决方法???
     - rest_formawork视图类继承APIVIEW,而APIVIEW,重写了as_view方法，返回值进行了csrf_token豁免了view方法
 
 3. 中间件主要有5个方法
@@ -496,6 +496,38 @@ Http协议全称为超文本传输协议，是基于tcp/ip协议进行通信的�
     - 模板中应用：{{ func }}
     - 注意：模板中引入方法，是无法传参数的
 
+    **过滤器**
+    - 使用方法{{变量|fileter:args}}
+    - 常见过滤器：支持链式操作
+        * default  设置默认值，如表格中某个单元格没有值设置一个默认值
+        * length   返回变量的长度
+        * filesizeformat   返回文件大小让人可读，kb,mb
+        * date:"Y-m-d H:i:s"    返回格式化的时间格式2016-11-01 18：08：08
+        * safe      在一串标签代码使用，表示受信任的，浏览器就不会解析成字符串
+        * add
+        * upper/lower/title
+        * join  列表拼接成字符串  value= ["china","big"] {value|join}
+
+    **自定义函数filter、simple_tag、inclusion_tag**
+    - 模板中引入的方式都相同 {% load filename.py %}
+    - 都可以在视图中通过name定义别名，一旦定义了别名，就不能用函数名
+    - filter只能最多传两个参数，simple_tag可以传多个
+    - inclusion_tag 返回一小段html代码
+    - simple_tag一般用于给页面返回一个结果
+    - filter也是返回一个结果，但可以作为if后面的条件，simple_tag不行
+        * 在app或项目下建立一个目录名必须是`templatetag`的目录,在其目录创建一个py文件
+        * 引入模块template：  from django import template
+        * 创建一个变量名必须是`register`：register= template.Library()
+    - filter
+        - 函数：
+
+            @rigester.filter
+            def add_china(value,args):
+                return "{}_{}".format(value,args)
+        - 模板中应用：
+            {{"big"|add_china:"@"}}
+            {% if "xxx"|add_china:"yyy" %}<h1>love</h1>{% endif %}
+    -
 
 
 
