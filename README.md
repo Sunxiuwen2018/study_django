@@ -6,7 +6,7 @@
 ```
 ## 你了解的请求头都有哪些？
 1. ACCEPT: 告诉服务端浏览器能够解析的数据格式
-2. User-Agent： 告诉服务器浏览器的设备信息，如是什么浏览器，版本等等
+2. User-Agent： 告诉服务器客户端的设备信息，如是什么浏览器，系统版本等等
 3. referer： 存放来源地址告诉服务器是从那里来的，可以用作防盗链
 4. host: 当前访问的主机名称
 5. Conten-type：请求提交的数据格式，一般用于post/put/patch请求
@@ -15,7 +15,7 @@
 ## 你了解的响应头有哪些？
 1. Conten-type：告知浏览器响应的数据格式
 2. Server：告知浏览器，服务器的类型，如nginx等等
-3. Location: 告知服务器找谁，一般重定向，会在这里显示要去的url，redirect的本质就是在响应中加了一个Location响应头
+3. Location: 告知浏览器找谁，一般重定向，会在这里显示要去的url，redirect的本质就是在响应中加了一个Location响应头
 4. set-cookie: 服务器返回的cookie
 5. connection：服务端设置响应后，是否断开连接 close/keep-alive
 
@@ -556,13 +556,13 @@
         - 模板中应用：
         ```
             {%  func1 "dog" "bug" %}
-
         ```
 
 ## 模型系统
 1. ORM 关系对应映射
     - 类     ---> 表
     - 对象   ---> 行
+    - 属性   ---> 字段
 
 2. 创建model类
     - 导入 from django.db import models
@@ -630,6 +630,8 @@
         + PS：对于fk，一般公司数据量和访问量不大时，创建fk做约束，反之以牺牲硬盘空间和代码量，来获取访问速度的提升(连表查询速度比单表查询速度要慢)
 
     - M2M 多对多，本质还是fk
+        - 联合唯一  就是一条数据不允许重复出现相同的  在meta中配置unique_together=[field1,field2]
+        - 联合索引  出现联合中的第一个条件，或全部出现才使用
         - 比如有多个孩子，和多种颜色、每个孩子可以喜欢多种颜色，一种颜色可以被多个孩子喜欢，对于双向均是可以有多个选择
         ```
             只有django会自动创建第三张表(场景：关系表只有boy和girl的id)：
@@ -677,15 +679,125 @@
                         user =  models.OneToOneField(to='userinfo')
 
         ```
+    - **[应用场景](http://www.cnblogs.com/pythonxiaohu/p/5814247.html)**
+    * 一对一：一般用于某张表的补充，比如用户基本信息是一张表，但并非每一个用户都需要有登录的权限，不需要记录用户名和密码，此时，合理的做法就是新建一张记录登录信息的表，与用户信息进行一对一的关联，可以方便的从子表查询母表信息或反向查询
+
+    * 外键：有很多的应用场景，比如每个员工归属于一个部门，那么就可以让员工表的部门字段与部门表进行一对多关联，可以查询到一个员工归属于哪个部门，也可反向查出某一部门有哪些员工
+
+    * 多对多：如很多公司，一台服务器可能会有多种用途，归属于多个产品线当中，那么服务器与产品线之间就可以做成对多对，多对多在A表添加manytomany字段或者从B表添加，效果一致
 
 
+    >- choices的应用场景，当如性别等这些属性不随时间的推移发生个数的变化，可以将其放入内存代替放入数据库，这是一种数据库优化的手段。
+    ```
+        class Customer(models.Model):
+                        name = models.CharField(verbose_name='姓名',max_length=32)
+                        gender_choices = (
+                            (1,'男'),
+                            (2,'女'),
+                        )
+                        gender = models.IntegerField(choices=gender_choices)
+    ```
+3. **常用ORM操作**
+    - 增
+        1. models.Department.object.create(titel="xxx") or .create(**{"title":"xxx"})
+
+        2. models.UserInfo.objects.create(depart=models.Department.bojects.get(id=1)) 增加一个关联对象
+
+           model.Department.object.create(depart_id=1)
+
+        3. obj = models.UserInfo.objects.filter(id=1).first()
+
+           obj.roles.`add(*[1,2,3])`
+
+    - 删
+        1. obj.delete()
+
+    - 改
+        1. obj.update(name="xxx")
+        2. obj.reles.set([2,3,4])
+
+    - 查
+        1. get()、filter()、exclude()、reverse()、distinct()、all()、values(field，field)、values_list(field)
 
 
+4. 高级操作
+    - **only**
+    - 仅显示表中部分指定字段的数据，返回值为一个个对象，如果再用对象查其它字段会再次连接数据库，影响效率
+    ```
+        # queryset[obj,obj,obj] 返回值为一个个对象
+
+        queryset = models.UserInfo.objects.all().only("id","username")
+        # < QuerySet[ < UserInfo: 张三 >, < UserInfo: 李四 >, < UserInfo: 王五 >, < UserInfo: 赵六 >] >
+
+        # 下面这种用法严重影响效率，因为email字段没有再queryset中，要查email就还需要再次连一次数据库
+        for obj in queryset:
+            print(obj.id, obj.username, obj.email)
 
 
+        # queryset[{},{},{}]
+
+        queryset = models.UserInfo.objects.all().values("id","username")
+        # < QuerySet[{'id': 1, 'username': '张三'}, {'id': 2, 'username': '李四'}, {'id': 3, 'username': '王五'}, {'id': 4,'username': '赵六'}] >
+
+        # queryset[(),(),()]
+
+        queryset = models.UserInfo.objects.all().values_list("id","username")
+        # < QuerySet[(1, '张三'), (2, '李四'), (3, '王五'), (4, '赵六')] >
+    ```
+    - **defer** 查询中排除某些字段，返回值通only，同样如果用得到的对象查排除的字段，会再次连接数据库
+
+    - **select_related**
+    - 主动进行连表查询，通过sql的join进行优化，会主动将关联字段一次性获取，这样当要查外键对象的属性时，不会再连数据库，而从内存拿，减少查询次数，提高了处理时间。
+    ```
+        select_related主要针一对一和多对一关系进行优化。
+        select_related使用SQL的JOIN语句进行优化，通过减少SQL查询的次数来进行优化、提高性能。
+        可以通过可变长参数指定需要select_related的字段名。也可以通过使用双下划线“__”连接字段名来实现指定的递归查询。没有指定的字段不会缓存，没有指定的深度不会缓存，如果要访问的话Django会再次进行SQL查询。
+        也可以通过depth参数指定递归的深度，Django会自动缓存指定深度内所有的字段。如果要访问指定深度外的字段，Django会再次进行SQL查询。
+        也接受无参数的调用，Django会尽可能深的递归查询所有的字段。但注意有Django递归的限制和性能的浪费。
+        Django >= 1.7，链式调用的select_related相当于使用可变长参数。Django < 1.7，链式调用会导致前边的select_related失效，只保留最后一个。
+    ```
+    - **prefetch_related**
+    - 多次单表查询，避免连表查询
+
+    > 效能分析
+        - 对比：
+            方式一：
+
+                result = models.User.objects.all() # 1次单表
+
+                for row in result:
+                    print(row.id,row.name,row.depart.title) # 100次单表
+
+            方式二（小于4张表的连表操作）： ***
+
+                result = models.User.objects.all().select_related('depart') # 1次连表查询
+                for row in result:
+                    print(row.id,row.name,row.depart.title)
 
 
+            方式三（大于4张表连表操作）：
 
+                # 先执行SQL： select * from user;
+                # 在执行SQL： select * from depart where id in [11,20]
+                result = models.User.objects.all().prefetch_related('depart') # 2次单表查询
+                for row in result:
+                    print(row.id,row.name,row.depart.title)
+
+5. ORM操作原生sql三种方法
+    - connection   直接操作数据库，本质是通过pymysql来操作，创建游标，执行sql语句，获取结果
+    - connections  在上面的基础上多了个指定数据库的功能
+    ```
+        from jango.db import connection,connections
+        # cursot = cursor.connections["db_name"].cursor() # 指定在setting中配置的数据库key
+        cursor = connection.cursor()  # 建立游标
+        cursor.execute("select * from goods where id=%s", [1,])  # 规定第二个参数要么是list，要么是tuple
+    ```
+
+    - raw 依赖model，执行sql语句,当查询其它表时，需要引用当前表的主键列名
+    ```
+        model.goos.objects.raw('select * from goos where id > 1')
+    ```
+    - extra 依赖model，执行部分sql，select或where，构造额外的查询条件或映射
 
 >**所有ORM操作**
 ```
@@ -922,4 +1034,38 @@
     def exists(self):
        # 是否有结果
 ```
+
+
+## Form，model.Form，modelForm.set
+
+- 返回时通过form生成表单标签，用户输入信息发给后台，通过form来进行校验，有异常返回错误信息，并保存用户数据，然后保存到数据库
+
+
+## 简叙session和cookie？
+django的session是，用户第一次访问验证后，服务端会在后台生成一个随机字符串sessionid通过设置响应头set-cookit返回给浏览器，当浏览器下次再次请求时会自动带上随机字符串存放在cookie中，服务端拿到浏览器的session与数据库中的进行比对，从而获得用户状态。
+
+- 底层实现：
+    - django接到请求，在中间件process_reqeust方法中，在内存中设置一个空字典，之后在视图中通过reqeust.session[key] 的方式设置session（本质是调用类中的setitem方法），返回时在中间件的process_response方法中，将字典存放到数据库，sessionid为key，设置的用户的数据为value存放到数据库，然后通过设置cookie的方法response.set_cookie将sessionid也就是随机字符串存放到响应头set_cookie中，返回到浏览器，浏览器保存到本地。下次访问时浏览器自定将sessionid存在cookie中发送过来，经过中间件，同样process_request方法从数据库中获取session进行比对，从而确认用户状态。
+
+
+## RBAC 基于角色的权限控制
+> 权限所涉及到的所有表和表之间的关系
+    - 6张表，用户表、角色表、权限表、权限角色表、用户角色表、菜单表
+    - 用户与角色 多对多
+    - 权限与角色 多对多
+    - 菜单与权限 一对多
+> 简述权限组件的实现流程？
+
+
+## 权限中都有哪些表
+- 用户表
+- 角色表
+- 用户角色表
+
+- 权限表
+- 权限角色表
+
+- 菜单表  为了做二级菜单
+
+
 
