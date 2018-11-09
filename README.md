@@ -703,7 +703,7 @@
 
 3. **常用ORM操作**
     - 增
-        1. models.Department.object.create(titel="xxx") or .create(**{"title":"xxx"})
+        1. models.Department.object.create(titel="xxx") or .create(`**`{"title":"xxx"})
 
         2. models.UserInfo.objects.create(depart=models.Department.bojects.get(id=1)) 增加一个关联对象
 
@@ -1071,3 +1071,16 @@
 
 
 
+# djangorestframework  api接口框架
+## 使用
+1. 安装
+```
+pip3 install djangorestframework
+```
+2. 创建路由 `url(r'test/', view.Test.as_view(), name="test")`
+
+3. 创建视图，继承APIVIEW
+```python
+
+
+```
