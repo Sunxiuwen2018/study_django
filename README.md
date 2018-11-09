@@ -87,6 +87,7 @@
 
 ## django中间件的作用？应用场景？
 1. 中间件，是django处理请求和响应的框架级别的钩子，可以对所有的请求和响应进行批量操作，在执行视图函数前后做一些额外的操作
+
 2. 应用场景：
     - 【内部玩】
         * 记录日志 （在process_request方法中用logging模块，待添加实现代码）
@@ -697,6 +698,7 @@
                         )
                         gender = models.IntegerField(choices=gender_choices)
     ```
+
 3. **常用ORM操作**
     - 增
         1. models.Department.object.create(titel="xxx") or .create(**{"title":"xxx"})
@@ -718,7 +720,6 @@
 
     - 查
         1. get()、filter()、exclude()、reverse()、distinct()、all()、values(field，field)、values_list(field)
-
 
 4. 高级操作
     - **only**
@@ -1037,12 +1038,11 @@
 
 
 ## Form，model.Form，modelForm.set
-
-- 返回时通过form生成表单标签，用户输入信息发给后台，通过form来进行校验，有异常返回错误信息，并保存用户数据，然后保存到数据库
+ - 返回时通过form生成表单标签，用户输入信息发给后台，通过form来进行校验，有异常返回错误信息，并保存用户数据，然后保存到数据库
 
 
 ## 简叙session和cookie？
-django的session是，用户第一次访问验证后，服务端会在后台生成一个随机字符串sessionid通过设置响应头set-cookit返回给浏览器，当浏览器下次再次请求时会自动带上随机字符串存放在cookie中，服务端拿到浏览器的session与数据库中的进行比对，从而获得用户状态。
+- django的session是，用户第一次访问验证后，服务端会在后台生成一个随机字符串sessionid通过设置响应头set-cookit返回给浏览器，当浏览器下次再次请求时会自动带上随机字符串存放在cookie中，服务端拿到浏览器的session与数据库中的进行比对，从而获得用户状态。
 
 - 底层实现：
     - django接到请求，在中间件process_reqeust方法中，在内存中设置一个空字典，之后在视图中通过reqeust.session[key] 的方式设置session（本质是调用类中的setitem方法），返回时在中间件的process_response方法中，将字典存放到数据库，sessionid为key，设置的用户的数据为value存放到数据库，然后通过设置cookie的方法response.set_cookie将sessionid也就是随机字符串存放到响应头set_cookie中，返回到浏览器，浏览器保存到本地。下次访问时浏览器自定将sessionid存在cookie中发送过来，经过中间件，同样process_request方法从数据库中获取session进行比对，从而确认用户状态。
@@ -1069,3 +1069,4 @@ django的session是，用户第一次访问验证后，服务端会在后台生�
 
 
 
+[TOC]
