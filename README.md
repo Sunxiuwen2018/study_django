@@ -1,5 +1,3 @@
-[TOC]
-
 # 第一部分：Django回顾
 ## 简叙http协议？
 ```
@@ -1091,7 +1089,7 @@ permission_dict = {
 - 权限角色表
 
 - 菜单表  目的：为了做二级菜单，它存放的是一级菜单
-
+- 菜单权限表
 
 
 # djangorestframework  api接口框架
