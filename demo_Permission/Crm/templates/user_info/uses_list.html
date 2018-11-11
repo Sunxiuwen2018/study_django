@@ -1,0 +1,44 @@
+{% extends 'layout.html' %}
+{#导入自定义的inclution_tag,自动生成菜单#}
+{% load auto_create_menu %}
+
+{% block left_centent %}
+    {% create_menu request %}
+{% endblock %}
+
+
+{% block right_centent %}
+{#判断按钮的url在不在权限字典中，如果不在就不显示#}
+{#   {% if 按钮url别名 in request.session.我的权限字典 %}#}
+{#       <button><a href="">添加</a></button>#}
+{#   {% endif %}#}
+{#上面显示比较麻烦，可以将其写成函数，作为if的判断条件，用自定义filter#}
+    {% if 'user_add'|check_btn:request %}
+        <button><a href="{% url 'crm:user_add' %}">添加</a></button>
+    {% endif %}
+    <table>
+        <thead>
+            <tr>
+                <th>名称</th>
+                <th>年龄</th>
+                <th>联系方式</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>xxx</td>
+                <td>30</td>
+                <td>13001988263</td>
+                <td>
+                    {% if 'user_edit'|check_btn:request %}
+                        <button><a href="{% url 'crm:user_edit' 3 %}">编辑</a></button>
+                    {% endif %}
+                    {% if 'user_del'|check_btn:request %}
+                        <button><a href="{% url 'crm:user_del' 4 %}">删除</a></button>
+                    {% endif %}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+{% endblock %}

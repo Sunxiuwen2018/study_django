@@ -1,0 +1,8 @@
+<dl>
+    {% for menu in menu_dict.values %}
+        <dt>{{ menu.title }}{{ menu.icon }}</dt>
+        {% for i in menu.child %}
+            <dd><a href="{{ i.url }}">{{ i.title }}</a></dd>
+        {% endfor %}
+    {% endfor %}
+</dl>

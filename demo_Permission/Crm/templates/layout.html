@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!--vue核心js-->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <!--vue路由系统js-->
+    <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+</head>
+<body>
+    <div style="width: 20%; float: left">
+        {% block left_centent %}
+        {% endblock %}
+    </div>
+    <div style="width: 80%; float: left">
+        {% block right_centent %}
+        {% endblock %}
+    </div>
+
+</body>
+</html>
