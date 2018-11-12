@@ -285,7 +285,7 @@
             url(r'^index/$', views.index),
         ]
 
-    - 扩展路由分发的另一个方法，也体现include的本质，返回3元组
+    - 扩展路由分发的另一个方法，也体现include()的本质，返回3元组`return (urlconf_module, app_name, namespace)`
       urlpatterns = [
             url(r'^admin/', admin.site.urls),
             url(r'^index/', views.index,name='index'),
@@ -294,11 +294,12 @@
             url(r'^crm/', ([
                                 url(r'^c1/', views.index),
                                 url(r'^c2/', ([
-                                                    url(r'^c3/', views.index,name='c3'), # 反向：reverse（‘n1:n2:c3’）
+                                                    url(r'^c3/', views.index,name='c3'),
                                                     url(r'^c4/', views.index),
                                               ],None,'n2')),
                            ],None,'n1')),
         ]
+        # 方向解析c3,结果为：reverse（‘n1:n2:c3’）
 
 ## 视图系统 View
 1. 软件架构模式
@@ -463,7 +464,7 @@
 ```
 
 ## 模板系统 Template
-> 将分发进行到底，可以将在自己的app中建立template、urls、views
+> 将分发进行到底，可以将在自己的app中建立template、urls、views[app中建立了自己views必须将views.py删除]
 1. 模板的查找顺序
     - 先去根目录下的templates文件夹中寻找
     - 根据app的注册顺序，去每个app的templates文件夹中寻找，只要有相同命名的模板就按顺序获取渲染（已验证）
@@ -518,7 +519,7 @@
     - inclusion_tag 返回一小段html代码
     - simple_tag一般用于给页面返回一个结果
     - filter也是返回一个结果，但可以作为if后面的条件，simple_tag不行
-        * 在app或项目下建立一个目录名必须是`templatetag`的目录,在其目录创建一个py文件
+        * 在app或项目下建立一个目录名必须是`templatetags`的目录,在其目录创建一个py文件
         * 引入模块template：  from django import template
         * 创建一个变量名必须是`register`：register= template.Library()
     - 自定义filter
@@ -1105,3 +1106,24 @@ pip3 install djangorestframework
 
 
 ```
+
+
+# 路飞项目
+[restful规范](https://www.cnblogs.com/wupeiqi/articles/7805382.html
+
+[restful规范](https://www.cnblogs.com/GGGG-XXXX/articles/9258310.html)
+
+[课程模块](https://www.cnblogs.com/GGGG-XXXX/articles/9913643.html)
+
+[DRF](https://www.cnblogs.com/GGGG-XXXX/p/9564651.html)
+
+[Django ContentType组件](https://www.cnblogs.com/GGGG-XXXX/articles/9697458.html)
+
+- contenttype 用于创建多个Fk
+
+- [虚拟环境](https://www.cnblogs.com/pyyu/p/9015317.html)
+
+
+- pip freeze > allpackages.txt  将项目的包导出到文本
+
+- pip install -r allpackages.txt   统一安装

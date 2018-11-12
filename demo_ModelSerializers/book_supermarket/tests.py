@@ -12,9 +12,4 @@ from django.test import TestCase
 8. 在admin中批量注册
 9. 创建超级用户
 10. 添加测试数据
-
-
-
-
-
 """

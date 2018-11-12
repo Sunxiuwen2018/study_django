@@ -24,7 +24,7 @@ from book_supermarket.utils.my_serializers import BookSerializer
 from book_supermarket.utils.my_authentions import MyAuthentications
 
 class BookView(APIView):
-    authentication_classes = [MyAuthentications,]
+    # authentication_classes = [MyAuthentications,]
 
     def get(self, request):
         """获取所有"""
@@ -38,6 +38,7 @@ class BookView(APIView):
         obj = request.data
         # 进行反序列化
         ser_obj = BookSerializer(data=obj)
+        print(ser_obj)
         # 进行数据校验
         if not ser_obj.is_valid():
             # 没有通过，则返回报错
@@ -78,3 +79,4 @@ class BookEditView(APIView):
             return Response({"code": 1001, "error": "删除的数据不存在"})
         queryset_obj.delete()
         return Response({"code": 2000, "msg": "删除成功"})
+
