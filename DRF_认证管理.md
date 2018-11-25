@@ -35,19 +35,21 @@
 ```
 
 >全局：
+```python
     --settings.py
         REST_FRAMEWORK = {
             'DEFAULT_AUTHENTICATION_CLASSES': ["demo_auth.Myauth.MyAuthentication", ],
         }
-
+```
 >局部：
+```python
     --views.py
         from demo_auth.MyAuth import MyAuthentication
         class TestView(APIView):
             authentication_classes = [MyAuthentication]
             def get(self, request):
                 return Response("测试中")
-
+```
 >**源码**
 
     def perform_authentication(self, request):
